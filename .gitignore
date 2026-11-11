@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/windows,macos,python,django,visualstudiocode,pycharm,jupyternotebooks
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,python,django,visualstudiocode,pycharm,jupyternotebooks
+# Created by https://www.toptal.com/developers/gitignore/api/windows,macos,django,python,visualstudiocode,pycharm,jupyternotebooks,vuejs
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,django,python,visualstudiocode,pycharm,jupyternotebooks,vuejs
 
 ### Django ###
 *.log
@@ -439,6 +439,13 @@ pyrightconfig.json
 .history
 .ionide
 
+### Vuejs ###
+# Recommended template: Node.gitignore
+
+node_modules/
+npm-debug.log
+yarn-error.log
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
@@ -465,6 +472,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,macos,python,django,visualstudiocode,pycharm,jupyternotebooks
-
-.idea/
+# End of https://www.toptal.com/developers/gitignore/api/windows,macos,django,python,visualstudiocode,pycharm,jupyternotebooks,vuejs
