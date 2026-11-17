@@ -12,30 +12,31 @@
 <body>
   <button id="btn">버튼</button>
   <!-- span태그 왜쓸까?  -->
+  <!-- textContent 의 일부만 바꾸고 싶을 때 사용 -->
   <p>클릭횟수 : <span id="counter">0</span></p>
 
   <script>
-    // 1. 초기값 할당
-
+    // 초기값 할당 (재할당이 가능한 let 사용)
     let counterNumber = 0
 
-    // 2. 버튼 요소 선택
+    // 1. qeurySelector
+    const btn = document.querySelector('#btn')
 
 
-    // 3. 콜백 함수 
+    // 2. 콜백 함수 
     const clickHandler = function () {
-      // 3.1 초기값 += 1
+      // 2.1 초기값 += 1
+      counterNumber += 1
 
+      // 2.2 span 요소를 선택
+      const spanTag = document.querySelector('#counter')
 
-      // 3.2 p 요소를 선택
-
-
-      // 3.3 p 요소의 컨텐츠를 1 증가한 초기값으로 설정
-
+      // 2.3 span 요소의 컨텐츠를 1 증가한 초기값으로 설정 (= 콘텐츠 조작)
+      spanTag.textContent = counterNumber
     }
 
-    // 4. 버튼에 이벤트 핸들러 부착 
-    
+    // 3. 버튼에 이벤트 핸들러 부착 
+    btn.addEventListener('click', clickHandler)
 
   </script>
 </body>

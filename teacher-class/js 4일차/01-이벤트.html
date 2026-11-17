@@ -12,14 +12,22 @@
   <button id="btn">버튼</button>
 
   <script>
-    // 1. 버튼 선택
+    // 1. 버튼 선택 -> querySelector
+    const btn = document.querySelector('#btn')
 
 
     // 2. 콜백 함수
-
+    const detectClick = function (event) {
+      console.log(event)
+      console.log(event.currentTarget)
+      console.log(this)
+    }
 
     // 3. 버튼에 이벤트 핸들러를 부착
-
+    // 이벤트 리스너 : 어떤 특정 이벤트를 감지했을 때 어떤 함수를 실행하겠다
+    // ex) btn(버튼)을 클릭했을 때 detectClick 함수를 실행하겠다
+    btn.addEventListener('click', detectClick)
+    
 
   </script>
 </body>

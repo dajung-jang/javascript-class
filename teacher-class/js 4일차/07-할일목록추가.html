@@ -10,30 +10,37 @@
 
 <body>
 
- <input type="text" class="input-text">
+  <input type="text" class="input-text">
 
- <button id="btn">+</button>
+  <button id="btn">+</button>
 
- <ul></ul>
+  <ul></ul>
 
- <script>
+  <script>
 
-   const inputTag = document.querySelector('.input-text') 
-   const btn = document.querySelector('#btn')            
-   const ulTag = document.querySelector('ul')            
+    // 1. querySelector
+    const inputTag = document.querySelector('.input-text') 
+    const btn = document.querySelector('#btn')            
+    const ulTag = document.querySelector('ul')            
 
-   // 할 일을 추가하는 함수
-   const addTodo = function (event) {
+    // 2. 콜백함수
+    // 할 일을 추가하는 함수
+    const addTodo = function (event) {
+      const inputData = inputTag.value
+      // 버튼 클릭하면 li 태그 생성
+      const liTag = document.createElement('li')
+      // 컨텐츠 조작
+      liTag.textContent = inputData
+      // ul의 자식으로 li 추가
+      ulTag.appendChild(liTag)
+      // 입력창 초기화
+      inputTag.value = ''
+    }
+  
+    // 이벤트 리스너
+    btn.addEventListener('click', addTodo)
 
-
-
-   }
-
-
-
-   btn.addEventListener('click', addTodo)
-
- </script>
+  </script>
 </body>
 
 </html>

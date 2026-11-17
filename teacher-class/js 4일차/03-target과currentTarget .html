@@ -37,17 +37,22 @@
   </div>
 
   <script>
+    // 1. querySelector
     const outerOuterElement = document.querySelector('#outerouter')
     const outerElement = document.querySelector('#outer')
     const innerElement = document.querySelector('#inner')
 
+    // 2. 콜백함수
     const clickHandler = function (event) {
-      // currentTarget 
-
-      // target 
-
+      // currentTarget : addEventListener가 부착된 요소
+      console.log('currentTarget : ', event.currentTarget.id)
+      // target : 실제 이벤트가 발생한 요소 (ex. click)
+      console.log('target : ', event.target.id)
     }
 
+    // 3. 이벤트 리스너
+    // outerOuter 요소를 클릭하면 clickHandler 함수를 실행하겠다
+    outerOuterElement.addEventListener('click', clickHandler)
 
   </script>
 </body>
