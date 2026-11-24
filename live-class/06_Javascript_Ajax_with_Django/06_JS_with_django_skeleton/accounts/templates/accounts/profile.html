@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>{{ person.username }}님의 프로필</h1>
+  <div>
+    팔로워 : <span id="followers-count"></span>{{ person.followers.all|length }} / 
+    팔로우 : <span id="following-count"></span> {{ person.followings.all|length }}
+  </div>
+
+  {% if request.user != person %}
+    <form id="follow-form" data-user-id="{{ person.pk }}" action="{% url "accounts:follow" person.pk %}" method="POST"> 
+      {% csrf_token %}
+      {% if request.user in person.followers.all %}
+        <input type="submit" value='UnFollow'>
+      {% else %}
+        <input type="submit" value='Follow'>
+      {% endif %}
+    </form>
+  {% endif %}
+  <hr>
+
+  {% comment %} 게시글 {% endcomment %}
+  <h2>{{ person.username }} 작성한 게시글</h2>
+  {% for article in person.article_set.all %}
+    <div>{{ article.title }}</div>
+  {% endfor %}
+  <hr>
+
+  {% comment %} 댓글 {% endcomment %}
+  <h2>{{ person.username }} 작성한 댓글</h2>
+  {% for comment in person.comment_set.all %}
+    <div>{{ comment.content }}</div>
+  {% endfor %}
+  <hr>
+
+  {% comment %} 좋아요 한 게시글 {% endcomment %}
+  <h2>{{ person.username }} 좋아요 한 게시글</h2>
+  {% for article in person.like_articles.all %}
+    <div>{{ article.title }}</div>
+  {% endfor %}
+
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.20.0/dist/axios.min.js"></script>
+  <script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+
+    const formTag = document.querySelector('#follow-form')
+    formTag.addEventListener('submit', function (event) {
+      event.preventDefault()
+      /*form 태그 안에서 
+      data-user-id="{{ person.pk }}" => data- 뒤에 적힌거를 카멜케이스로 작성하면 javascript 에서 변수명을 사용 할 수 있음
+      그래서 event.currentTarget.dataset. 뒤에 userId 를 붙여서 팔로우 할 유저값 불러올 수 있는 거임 
+      그거를 const userId 로 변수에 할당 했음
+      axios url 에서 $ 안에 적힌 userId 는 이 새로 할당한 변수명 const userId 임
+      */
+      const userId = event.currentTarget.dataset.userId
+
+      axios ({
+        method: 'post',
+        url: `/accounts/${userId}/follow/`,
+        headers: {"X-CSRFToken": csrftoken},
+      })
+        .then((response) => {
+          // console.log(response)
+          // console.log(response.data)
+          const isFollowed = response.data.is_followed
+          // 'input[type=submit] = input 중에 type=submit 인 거를 가져 오겠다
+          const followBtn = document.querySelector('input[type=submit]')
+
+          if (isFollowed === true){
+            followBtn.value = 'UnFollow'
+          } else {
+            followBtn.value = 'Follow'
+          }
+
+          const followersCount = document.querySelector('#followers-count')
+          const followingCount = document.querySelector('#following-count')
+          followersCount.textContent = response.data.followers_count
+          followingCount.textContent = response.data.following_count
+        })
+    })
+  </script>
+</body>
+</html>
