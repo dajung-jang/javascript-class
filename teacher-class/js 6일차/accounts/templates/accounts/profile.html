@@ -7,23 +7,24 @@
 
     <div>
         <div>
-            팔로잉 : {{person.followings.all|length}}
-            / 팔로워 : {{person.followers.all|length}}
+            <!-- 팔로잉, 팔로워 숫자 바로 바뀌는 건 content 조작 -->
+            팔로잉 : <span id="followings-count">{{person.followings.all|length}}</span> / 
+            팔로워 :<span id="followers-count"> {{person.followers.all|length}}</span>  
         </div>
 
         {% if request.user != person %}
             <div>
-                <form action="{% url "accounts:follow" person.pk%}" method="POST">
+                {% comment %} user-id : 케밥 케이스 -> js 에서는 카멜케이스로 바뀜 {% endcomment %}
+                <form id="follow-form" data-user-id="{{ person.pk }}">
                     {% csrf_token %}
                     {% if request.user in person.followers.all %}
-                        <input type="submit" value="언팔로우">
+                        <input type="submit" value="UnFollow" id="follow-input">
                     {% else %}
-                        <input type="submit" value="팔로우">
+                        <input type="submit" value="Follow" id="follow-input">
                     {% endif %}
                 </form>
             </div>
         {% endif %}
-    
     
     </div>
 
@@ -51,4 +52,45 @@
     <hr>
     <a href="{% url "articles:index" %}">[HOME]</a>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // 1. qeurySelector
+        const formTag = document.querySelector("#follow-form")
+
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // 2. 콜백 함수
+        const handleFollow = async function (event) {
+            event.preventDefault()
+            // view.py 에서 data-     =>    dataset
+            // console.log(event.currentTarget.dataset)
+            const userId = event.currentTarget.dataset.userId
+            try {
+                const response = await axios({
+                    method: 'post',
+                    url: `/accounts/${userId}/follow/`,
+                    headers: {'X-CSRFToken': csrftoken},
+                })
+                // console.log(response)
+                const isFollowed = response.data.is_followed
+                const followBtn = document.querySelector('#follow-input')
+                if (isFollowed === true) {
+                    followBtn.value = "UnFollow"
+                } else {
+                    followBtn.value = "Follow"
+                }
+                const followingsCountTag = document.querySelector('#followings-count')
+                const followersCountTag = document.querySelector('#followers-count')
+                // 컨텐츠 조작 (span 태그 안에 팔로잉, 팔로워 숫자 변경 하기 위해서)
+                followingsCountTag.textContent = response.data.followings_count
+                followersCountTag.textContent = response.data.followers_count
+            }
+            catch(error) {
+                console.log(error)
+            }
+        }
+
+        // 3. 이벤트 리스너
+        formTag.addEventListener('submit', handleFollow)
+    </script>
 {% endblock content %}

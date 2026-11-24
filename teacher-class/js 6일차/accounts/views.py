@@ -126,20 +126,31 @@ def profile(request, username):
     # 단순 GET요청 페이지 렌더링
     return render(request, 'accounts/profile.html', context)
 
+from django.http import JsonResponse
+
 @login_required
 def follow(request, user_pk):
     User = get_user_model()
-    # 나 <-> 상대방
+    # 나(me) <-> 상대방(you)
     # person : user_pk를 갖고 팔로우하려는 상대방
-    person = User.objects.get(pk=user_pk)
+    you = User.objects.get(pk=user_pk)
+    me = request.user
     # 자기자신을 팔로우 하는것을 방지
-    if person != request.user:
+    if you != me:
         # filter.exist() : 데이터베이스(DB)에 존재하냐?
         # followers : 역참조
-        if person.followers.filter(pk=request.user.pk).exists():
+        if me in you.followers.all():
             # 이미 팔로우했으면 팔로우 취소
-            person.followers.remove(request.user)
+            you.followers.remove(me)
+            is_followed = False
         else:
             # 팔로우
-            person.followers.add(request.user)
-    return redirect('accounts:profile', person.username)
+            you.followers.add(me)
+            is_followed = True
+        context = {
+            'is_followed': is_followed,
+            'followings_count': you.followings.count(), # 팔로잉 수
+            'followers_count': you.followers.count(),   # 팔로워 수 (여기 쓰는 변수 이름 헷갈리면 model.py 가서 변수명 확인 하면 됨)
+        }
+        return JsonResponse(context)
+    return redirect('accounts:profile', you.username)
